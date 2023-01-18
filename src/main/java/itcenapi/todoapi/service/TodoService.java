@@ -39,7 +39,7 @@ public class TodoService {
     }
 
     // 등록
-    public TodoListResponseDTO create(final TodoCreateRequestDTO createRequestDTO) {
+    public TodoListResponseDTO create(final TodoCreateRequestDTO createRequestDTO) throws RuntimeException {
         todoRepository.save(createRequestDTO.toEntity());
         log.info("todo save 성공 - {}", createRequestDTO.getTitle());
         return retrieve(); // 이걸 리턴하면 갱신된 리스트를 새로고침 해서 가져다 주는 효과, 즉 추가된 거 포함해서 전체 리스트를 리턴
