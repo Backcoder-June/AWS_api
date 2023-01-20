@@ -46,7 +46,7 @@ public class TodoService {
     }
 
     // 수정
-    public TodoListResponseDTO update(final String todoId, final TodoModifyRequestDTO todoModifyRequestDTO) {
+    public TodoListResponseDTO update(final String todoId, final TodoModifyRequestDTO todoModifyRequestDTO) throws IllegalArgumentException {
         Optional<TodoEntity> targetEntity = todoRepository.findById(todoId);
 
         targetEntity.ifPresent(entity -> {

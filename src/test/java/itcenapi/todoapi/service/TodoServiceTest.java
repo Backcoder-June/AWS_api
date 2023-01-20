@@ -74,7 +74,6 @@ class TodoServiceTest {
         TodoListResponseDTO updatedTodo = todoService.update(targetTodo.getTodoId(), modifydto);
 
         //then
-
         assertEquals("수정된제목", updatedTodo.getTodos().get(1).getTitle());
         assertTrue(updatedTodo.getTodos().get(1).isDone());
         System.out.println("============");

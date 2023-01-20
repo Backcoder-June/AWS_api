@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/api/todos")  //여기 버전 v1 v2 명시해주기도 하는데, 새로운 버전의 controller 새로 만드는 식 ( 배려 )
+//CORS 허용 설정
+@CrossOrigin(origins = {"http://localhost:5501"})
 public class TodoApiController {
     private final TodoService todoService;
 
@@ -70,7 +72,7 @@ public class TodoApiController {
             TodoListResponseDTO updatedDTO = todoService.update(todoId, todoModifyRequestDTO);
             return ResponseEntity.ok()
                     .body(updatedDTO);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.internalServerError()
                     .body("서버 에러로 수정에 실패 " + e.getMessage());
         }
