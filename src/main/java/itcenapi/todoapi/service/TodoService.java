@@ -47,6 +47,7 @@ public class TodoService {
 
     // 수정
     public TodoListResponseDTO update(final String todoId, final TodoModifyRequestDTO todoModifyRequestDTO) throws IllegalArgumentException {
+        System.out.println("====================== \n" + todoId);
         Optional<TodoEntity> targetEntity = todoRepository.findById(todoId);
 
         targetEntity.ifPresent(entity -> {
@@ -54,7 +55,7 @@ public class TodoService {
             entity.setDone(todoModifyRequestDTO.isDone());
 
             todoRepository.save(entity); //저장까지 해줘야 완성
-        } );
+        });
         return retrieve();  // 전체목록 조회를 리턴
     }
 

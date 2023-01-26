@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/api/todos")  //여기 버전 v1 v2 명시해주기도 하는데, 새로운 버전의 controller 새로 만드는 식 ( 배려 )
 //CORS 허용 설정
-@CrossOrigin(origins = {"http://localhost:5501"})
+@CrossOrigin //(origins = {"http://localhost:5501"})
 public class TodoApiController {
     private final TodoService todoService;
 
@@ -39,7 +39,7 @@ public class TodoApiController {
             TodoListResponseDTO todoListResponseDTO = todoService.create(todoCreateRequestDTO);
             return ResponseEntity
                     .ok()
-                    .body(todoCreateRequestDTO);
+                    .body(todoListResponseDTO);
         } catch (RuntimeException e) {
             log.error(e.getMessage());
             return ResponseEntity
@@ -61,7 +61,7 @@ public class TodoApiController {
     }
 
     // 수정
-    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/{id}", method = {RequestMethod.PATCH, RequestMethod.PUT})
     public ResponseEntity<?> updateTodos(@PathVariable("id") String todoId, @Validated @RequestBody TodoModifyRequestDTO todoModifyRequestDTO, BindingResult result) {
         if (result.hasErrors()) {
             log.info("수정 바인딩 오류 - {}", result.getFieldError());
@@ -87,14 +87,14 @@ public class TodoApiController {
         if (todoId == null || todoId.equals("")) {
             return ResponseEntity
                     .badRequest()
-                    .body(TodoListResponseDTO.builder().error("ID가 잘못됨"));
+                    .body(TodoListResponseDTO.builder().error("Wrong Id"));
         }
         try {
             TodoListResponseDTO responseDTO = todoService.delete(todoId);
-            return ResponseEntity.ok().body("삭제 성공");
+            return ResponseEntity.ok().body(responseDTO);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body("삭제 실패" + e.getMessage());
+                    .body("delete Failed" + e.getMessage());
         }
     }
 }
