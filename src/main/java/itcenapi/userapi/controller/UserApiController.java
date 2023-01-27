@@ -1,5 +1,7 @@
 package itcenapi.userapi.controller;
 
+import itcenapi.userapi.dto.LoginRequestDTO;
+import itcenapi.userapi.dto.LoginResponseDTO;
 import itcenapi.userapi.dto.UserSignUpDTO;
 import itcenapi.userapi.dto.UserSignUpResponseDTO;
 import itcenapi.userapi.exception.DuplicatedEmailException;
@@ -11,22 +13,46 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
 @RequestMapping("/api/auth")
+@CrossOrigin
 public class UserApiController {
     private final UserService userService;
+
     @Autowired
     public UserApiController(UserService userService) {
         this.userService = userService;
     }
 
-    @RequestMapping(value ="/signup", method = RequestMethod.POST)
+
+    //로그인 요청 처리
+    @PostMapping("/signin")
+    public ResponseEntity<?> signIn(@Validated @RequestBody LoginRequestDTO requestDTO) {
+
+        try {
+            LoginResponseDTO userInfo = userService.getByCredentials(
+                    requestDTO.getEmail(),
+                    requestDTO.getPassword()
+            );
+            return ResponseEntity
+                    .ok().body(userInfo);
+
+        } catch (RuntimeException e) {// 오류 생겼을 때는, ResponseDTO 에 오류 메세지만 담아서 보내기
+            return ResponseEntity
+                    .badRequest()
+                    .body(LoginResponseDTO.builder()
+                            .message(e.getMessage()) //오류메세지 response 에 빌드해서 넘김
+                            .build());
+        }
+    }
+
+
+
+    // 로그인 처리
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@Validated @RequestBody UserSignUpDTO userSignUpDTO, BindingResult bindingResult) {
         log.info("/api/auth/sighup POST! - {}", userSignUpDTO);
 
@@ -56,9 +82,19 @@ public class UserApiController {
                     .badRequest()
                     .body(e.getMessage());
         }
+    }
 
 
+    // 이메일 중복확인 => t /f 리턴
+    @RequestMapping(value = "/check", method = RequestMethod.GET)
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        if (email == null || email.trim().equals("")) {
+            return ResponseEntity.badRequest().body("이메일이 빈값입니다.");
+        }
+        boolean flag = userService.isDuplicatedEmail(email);
+        log.info("{} 중복여부 - {}", email, flag);
 
+        return ResponseEntity.ok().body(flag);
     }
 
 

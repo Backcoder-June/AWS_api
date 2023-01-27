@@ -1,5 +1,6 @@
 package itcenapi.todoapi.entity;
 
+import itcenapi.userapi.entity.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -7,8 +8,11 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Setter @Getter
-@AllArgsConstructor @NoArgsConstructor
+@Setter
+@Getter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(of = "todoId")
 @Builder
 @Entity
@@ -25,5 +29,8 @@ public class TodoEntity {
     @CreationTimestamp
     private LocalDateTime createdDate;
 
-
+    //회원과 관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }

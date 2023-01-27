@@ -1,5 +1,7 @@
 package itcenapi.userapi.service;
 
+import itcenapi.security.TokenProvider;
+import itcenapi.userapi.dto.LoginResponseDTO;
 import itcenapi.userapi.dto.UserSignUpDTO;
 import itcenapi.userapi.dto.UserSignUpResponseDTO;
 import itcenapi.userapi.entity.UserEntity;
@@ -17,10 +19,13 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
     }
 
     // 회원가입 처리
@@ -46,9 +51,43 @@ public class UserService {
 
         log.info("회원가입 성공 - user_id : {}", savedUser.getId());
 
+
         // responseDTO 로 바꿔서 응답
         return new UserSignUpResponseDTO(savedUser);
     }
+
+
+    // 이메일 중복 확인
+    public boolean isDuplicatedEmail(String email) {
+        if (email == null) {
+            throw new RuntimeException("이메일 값이 없습니다.");
+        }
+        return userRepository.existsByEmail(email);
+    }
+
+
+    // 로그인 검증
+    public LoginResponseDTO getByCredentials(final String email, final String rawPassword) {
+        // 입력한 이메일로 회원정보 조회
+        UserEntity originalUser = userRepository.findByEmail(email);
+
+        // 가입했는지 검증
+        if (originalUser == null) {
+            throw new RuntimeException("가입된 회원이 아닙니다.");
+        }
+
+        // 패스워드 검증 ( 입력 비번 <=> DB 저장된 비번 )
+        if (!passwordEncoder.matches(rawPassword, originalUser.getPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+        log.info("{} 회원 로그인 성공", originalUser.getUserName());
+
+        String token = tokenProvider.createToken(originalUser);
+
+        return new LoginResponseDTO(originalUser, token);
+    }
+
+//
 }
 
 
