@@ -31,6 +31,10 @@ public class TodoEntity {
 
     //회원과 관계 설정
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private UserEntity user;
+
+    //우회용 외래키 => 애가 joinColumn 에서 객체 대신 String 으로 차지
+    @Column(name = "user_id")
+    private String userId;
 }

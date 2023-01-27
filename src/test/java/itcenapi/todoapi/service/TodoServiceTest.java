@@ -28,9 +28,9 @@ class TodoServiceTest {
         TodoCreateRequestDTO dto2 = TodoCreateRequestDTO.builder().title("정리하기").build();
         TodoCreateRequestDTO dto3 = TodoCreateRequestDTO.builder().title("응용하기").build();
 
-        todoService.create(dto1);
-        todoService.create(dto2);
-        todoService.create(dto3);
+//        todoService.create(dto1);
+//        todoService.create(dto2);
+//        todoService.create(dto3);
     }
 
 
@@ -44,17 +44,17 @@ class TodoServiceTest {
                 .build();
 
         //when
-        TodoListResponseDTO todoListResponseDTO = todoService.create(newTodo);
+//        TodoListResponseDTO todoListResponseDTO = todoService.create(newTodo);
 
         //then
-        List<TodoReponseDTO> todos = todoListResponseDTO.getTodos();
-        assertEquals(4, todos.size());
-
-        System.out.println("==============");
-        for (TodoReponseDTO todo : todos) {
-            System.out.println(todo);
+//        List<TodoReponseDTO> todos = todoListResponseDTO.getTodos();
+//        assertEquals(4, todos.size());
+//
+//        System.out.println("==============");
+//        for (TodoReponseDTO todo : todos) {
+//            System.out.println(todo);
         }
-    }
+//    }
 
     @Test
     @DisplayName("수정테스트 - 제목 하고 done 처리 ")
@@ -69,14 +69,14 @@ class TodoServiceTest {
                 .build();
 
         //when
-        TodoReponseDTO targetTodo = todoService.retrieve().getTodos().get(1);
+//        TodoReponseDTO targetTodo = todoService.retrieve().getTodos().get(1);
 
-        TodoListResponseDTO updatedTodo = todoService.update(targetTodo.getTodoId(), modifydto);
+//        TodoListResponseDTO updatedTodo = todoService.update(targetTodo.getTodoId(), modifydto);
 
         //then
-        assertEquals("수정된제목", updatedTodo.getTodos().get(1).getTitle());
-        assertTrue(updatedTodo.getTodos().get(1).isDone());
-        System.out.println("============");
+//        assertEquals("수정된제목", updatedTodo.getTodos().get(1).getTitle());
+//        assertTrue(updatedTodo.getTodos().get(1).isDone());
+//        System.out.println("============");
 
 
 

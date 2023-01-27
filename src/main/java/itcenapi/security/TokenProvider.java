@@ -55,7 +55,7 @@ public class TokenProvider {
                 // => 위조되지 않았다면 body에 페이로드(claims)를 리턴
                 // => 위조되었다면 Exception
                 // token 디코딩 서명기록 파싱
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody(); // => body 안에 Token 정보들 (subject ~ ) 다 담김
 
         return claims.getSubject();  // subject => 토큰을 발급받은 유저의 식별자(pk)

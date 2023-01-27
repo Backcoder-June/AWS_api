@@ -33,19 +33,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Header 에서 Token 가져오기
         try {
-            String clientToken = parseBearerToken(request);
+            String token = parseBearerToken(request);
 
-            log.info("JWT token filter is running... - token : {}", clientToken);
+            log.info("JWT token filter is running... - token : {}", token);
 
             // 토큰 위조여부 검사
-            if (clientToken != null) {
-                String tokenSubject = provider.validateAndGetUserId(clientToken);// 여기 위조면 exception 이니까 try-catch
-                log.info("인증된 tokensubject-userid : {}", tokenSubject);
+            if (token != null) {
+                String userId = provider.validateAndGetUserId(token);// 여기 위조면 exception 이니까 try-catch
+                log.info("인증된 tokensubject-userid : {}", userId);
 
-
+                /** 이 부분에서, websecurityconfig 에서 authenticated 인증을 함 **/
                 // 인증 완료!! api서버에서는 SecurityContextHolder에 등록해야 인증된 사용자라고 생각한다.
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        clientToken, // 컨트롤러의 @AuthenticationPrincipal 값
+                        userId, // 컨트롤러의 @AuthenticationPrincipal 값
                         null,
                         AuthorityUtils.NO_AUTHORITIES
                 );
@@ -56,6 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setContext(securityContext);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("인증되지 않은 사용자 입니다.");
         }
 
