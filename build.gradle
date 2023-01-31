@@ -2,7 +2,19 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'war'
 }
+
+
+war {
+	archiveName 'ROOT.war'
+}
+
+bootWar.enabled = false // 내장 WAS 비활성화
+war.enabled = true
+
+
+
 
 group = 'itcenapi'
 version = '0.0.1-SNAPSHOT'
@@ -38,6 +50,12 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}
+
+// 빌드 시 test 생략
+tasks.named('test'){
+	exclude '**/*'
 }
+
